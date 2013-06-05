@@ -28,8 +28,12 @@ class SalesHierarchy
 
 abstract class Salesperson
 {
+    /**
+     * @var string
+     */
+    protected $name;
 
-	/**
+    /**
 	* @var Salesperson
 	*/
 	protected $right = null;
@@ -38,6 +42,19 @@ abstract class Salesperson
 	* @var Salesperson
 	*/
 	protected $left = null;
+
+    /**
+     * @var Salesperson
+     */
+    protected $manager = null;
+
+    /**
+     * @param $name
+     */
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
 
 	public function left()
 	{
@@ -49,6 +66,11 @@ abstract class Salesperson
 		return $this->right;
 	}
 
+    public function manager()
+    {
+        return $this->manager;
+    }
+
 	public function set_right(Salesperson $person)
 	{
 		$this->right = $person;
@@ -58,6 +80,11 @@ abstract class Salesperson
 	{
 		$this->left = $person;
 	}
+
+    public function set_manager(Salesperson $person)
+    {
+        $this->manager = $person;
+    }
 
 	/**
 	* @return double a value between 0 and 1 that represents the
@@ -90,13 +117,21 @@ abstract class Salesperson
 		return $lead->value() * (1 - $this->success_rate());
 	}
 
+    /**
+     * @return string name The salesperson's name
+     */
+    public function name()
+    {
+        return $this->name;
+    }
+
 }
 
 class Sociopath extends Salesperson
 {
 	public function success_rate()
 	{
-		// implement me!
+		return 0.85;
 	}
 
 }
@@ -105,9 +140,12 @@ class Clueless extends Salesperson
 {
 	public function success_rate()
 	{
-		// implement me!
-
-		// tip: use the is_a function
+        $manager = $this->manager();
+        if ($manager instanceof Sociopath)
+        {
+            return 0.65;
+        }
+        return 0.45;
 	}
 }
 
@@ -115,7 +153,13 @@ class Loser extends Salesperson
 {
 	public function success_rate()
 	{
-		// implement me!
+        $manager = $this->manager();
+        if ($manager instanceof Loser)
+        {
+            return 0.5 * $manager->success_rate();
+        }
+
+        return 0.02;
 	}
 }
 
