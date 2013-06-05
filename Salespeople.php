@@ -28,6 +28,7 @@ class SalesHierarchy
 
 abstract class Salesperson
 {
+    protected $name;
 
 	/**
 	* @var Salesperson
@@ -39,6 +40,21 @@ abstract class Salesperson
 	*/
 	protected $left = null;
 
+    /**
+     * @var Salesperson
+     */
+    protected $manager = null;
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
+
+    public function name()
+    {
+        return $this->name;
+    }
+
 	public function left()
 	{
 		return $this->left;
@@ -49,14 +65,26 @@ abstract class Salesperson
 		return $this->right;
 	}
 
+    public function manager()
+    {
+        return $this->manager;
+    }
+
+    public function set_manager(Salesperson $person)
+    {
+        $this->manager = $person;
+    }
+
 	public function set_right(Salesperson $person)
 	{
 		$this->right = $person;
+        $person->set_manager($this);
 	}
 
 	public function set_left(Salesperson $person)
 	{
 		$this->left = $person;
+        $person->set_manager($this);
 	}
 
 	/**
@@ -96,7 +124,7 @@ class Sociopath extends Salesperson
 {
 	public function success_rate()
 	{
-		// implement me!
+		return 0.85;
 	}
 
 }
@@ -105,9 +133,12 @@ class Clueless extends Salesperson
 {
 	public function success_rate()
 	{
-		// implement me!
+		if (is_a($this->manager, "Sociopath"))
+        {
+            return 0.65;
+        }
 
-		// tip: use the is_a function
+        return 0.45;
 	}
 }
 
@@ -115,7 +146,17 @@ class Loser extends Salesperson
 {
 	public function success_rate()
 	{
-		// implement me!
+		if (is_a($this->manager, "Loser"))
+        {
+            if (is_a($this->manager->manager, "Loser"))
+            {
+               return 0.05;
+            }
+
+            return 0.1;
+        }
+
+        return 0.2;
 	}
 }
 
