@@ -39,6 +39,17 @@ abstract class Salesperson
 	*/
 	protected $left = null;
 
+	protected $manager = null;
+
+	public function manager()
+	{
+		return this->manager;
+	}
+
+	public function set_manager(Salesperson $person) {
+		$this->manager = $person;
+	}
+
 	public function left()
 	{
 		return $this->left;
@@ -52,11 +63,13 @@ abstract class Salesperson
 	public function set_right(Salesperson $person)
 	{
 		$this->right = $person;
+		$person->set_manager($this);
 	}
 
 	public function set_left(Salesperson $person)
 	{
 		$this->left = $person;
+		$person->set_manager($this);
 	}
 
 	/**
@@ -90,13 +103,16 @@ abstract class Salesperson
 		return $lead->value() * (1 - $this->success_rate());
 	}
 
+	public String name;
+
+
 }
 
 class Sociopath extends Salesperson
 {
 	public function success_rate()
 	{
-		// implement me!
+		return 0.85;
 	}
 
 }
@@ -105,9 +121,13 @@ class Clueless extends Salesperson
 {
 	public function success_rate()
 	{
-		// implement me!
-
-		// tip: use the is_a function
+		
+		if (is_a($this->manager(), Sociopath)) {
+			return 0.65;
+		}
+		else {
+			return 0.45;
+		}
 	}
 }
 
@@ -115,7 +135,12 @@ class Loser extends Salesperson
 {
 	public function success_rate()
 	{
-		// implement me!
+		if (is_a($this->manager(), Loser)) {
+			return $this->manager()->success_rate()/2
+		}
+		else {
+			return 0.02;
+		}
 	}
 }
 
@@ -135,3 +160,4 @@ class Lead
 		return $this->value;
 	}
 }
+
