@@ -26,8 +26,12 @@ class SalesHierarchy
 	}
 }
 
-abstract class Salesperson
+class Salesperson
 {
+
+	public name;
+
+	public manager;
 
 	/**
 	* @var Salesperson
@@ -95,8 +99,8 @@ abstract class Salesperson
 class Sociopath extends Salesperson
 {
 	public function success_rate()
-	{
-		// implement me!
+	{		
+		return .85;
 	}
 
 }
@@ -105,9 +109,12 @@ class Clueless extends Salesperson
 {
 	public function success_rate()
 	{
-		// implement me!
-
-		// tip: use the is_a function
+		if(is_a($parent,"Sociopath"))
+		{
+			return .65;
+		}else{
+			return .45;
+		}
 	}
 }
 
@@ -115,7 +122,12 @@ class Loser extends Salesperson
 {
 	public function success_rate()
 	{
-		// implement me!
+		if(is_a($parent,"Loser"))
+		{
+			return .01;
+		}else{
+			return .02;
+		}
 	}
 }
 
